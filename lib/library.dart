@@ -45,6 +45,9 @@ class Library {
   }
 
   int getNewestId() {
+    if (available.length == 0 || available == List.empty()) {
+      return 0;
+    }
     return available[available.length].getId();
   }
 

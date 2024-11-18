@@ -1,7 +1,11 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:library_management/book.dart';
+import 'package:library_management/library.dart';
+
 void startApplication() {
+  Library lib = Library.empty();
   clear();
   stdout.writeln("Library Manager, (c) Kyle Garzon 2024\nType 'help' for help.");
   while (true) {
@@ -16,7 +20,13 @@ void startApplication() {
         exit(0);
       case "ADD":
       case "add":
-        
+        // title
+        stdout.writeln("Book title:");
+        String title = getIn();
+        stdout.writeln("Book author:");
+        String author = getIn();
+        Book b = Book(title, author, lib.getNewestId() + 1);
+        stdout.write("New book registered:\n\nTitle: $title\nAuthor: $author\nID: $lib.getNewestId()-1\n");
     }
   }  
 
@@ -37,10 +47,8 @@ void printHelp() {
 /// Get input from command line, but for something other than for a command
 String getIn() {
   String? ret = null;
-  do {
-    stdout.write("> ");
-    ret = stdin.readLineSync();
-  } while (ret != null);
+  stdout.write("> ");
+  ret = stdin.readLineSync();
   if (ret == null) {
     clear();
     return getIn();
