@@ -1,4 +1,4 @@
-import '../lib/ui.dart';
+import 'package:library_management/ui.dart';
 
 void main() {
 
