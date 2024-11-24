@@ -6,6 +6,7 @@ import 'package:library_management/book.dart';
 import 'package:library_management/library.dart';
 import 'package:library_management/library_user.dart';
 
+// This is probably awful, but if they write scanners and parsers like this than I can too
 void startApplication() {
   Library lib = Library.empty();
   clear();
@@ -82,6 +83,15 @@ void startApplication() {
         stdout.writeln("User $name was removed.");
       case "RETURN":
       case "return":
+        for (int i = 0; i < lib.available.length; i++) {
+          if (lib.available[i].isAvailable) {
+            continue;
+          }
+          String title = lib.available[i].getTitle();
+          String author = lib.available[i].getAuthor();
+          int id = lib.available[i].getId();
+          stdout.writeln("$title by $author ID: $id");
+        }
         stdout.writeln("The name of the book to return: ");
         String title = getIn();
         try {
@@ -90,8 +100,34 @@ void startApplication() {
           lib.returnBook(b);
           stdout.writeln("Book $b returned from $u successfully.");
         } catch (e) {
-          stdout.writeln("An error occured: $e");
+          stdout.writeln("An error occurred: $e");
         }
+        break;
+      case "CHECKOUT":
+      case "checkout":
+        stdout.writeln("[-----------------------------]");
+        for (int i = 0; i < lib.available.length; i++) {
+          if (!lib.available[i].isAvailable) {
+            continue;
+          }
+          String title = lib.available[i].getTitle();
+          String author = lib.available[i].getAuthor();
+          int id = lib.available[i].getId();
+          stdout.writeln("$title by $author ID: $id");
+        }
+        stdout.writeln("[-----------------------------]");
+        stdout.writeln("The name of the book to checkout: ");
+        String title = getIn();
+        if (lib.getBook(title).isAvailable) {
+          stdout.writeln("The book $title has already been checked in, please try again.");
+          break;
+        }
+        Book b = lib.getBook(title);
+        LibraryUser u = lib.getBorrower(b);
+        u.checkedOut.remove(b);
+        lib.available.remove(b);
+        b.isAvailable = true;
+        lib.available.add(b);
         break;
     }
   }
@@ -126,7 +162,7 @@ String getIn() {
 }
 
 String getInput() {
-  stdout.write("> ");
+  stdout.write(">> ");
   String? input = stdin.readLineSync();
   if (input == null) {
     stdout.writeln("Error: `null` was received; please enter valid input.\n");
